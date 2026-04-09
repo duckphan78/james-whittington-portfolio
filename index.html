@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="James Whittington — Freelance Video Editor based in Seattle, WA. 20+ years crafting commercial, documentary, and branded content.">
+    <title>James Whittington Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:       #0a0a0a;
+            --surface:  #111111;
+            --border:   #1e1e1e;
+            --text:     #eeeeee;
+            --text-mid: #888888;
+            --text-dim: #3a3a3a;
+            --yellow:   #FFE500;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 200;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            background: rgba(10,10,10,0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo { font-size: 14px; font-weight: 500; letter-spacing: 0.05em; }
+        .nav-links { display: flex; gap: 40px; list-style: none; }
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--yellow);
+            transition: opacity 0.2s;
+        }
+        .nav-links a:hover { opacity: 0.75; }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 0 48px 88px;
+        }
+        .hero-location {
+            font-size: 11px; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.22em; color: var(--text-mid); margin-bottom: 28px;
+        }
+        .hero-name {
+            font-size: clamp(56px, 9vw, 104px); font-weight: 200;
+            line-height: 0.95; letter-spacing: -0.03em; color: var(--text); margin-bottom: 28px;
+        }
+        .hero-desc {
+            font-size: 16px; font-weight: 300; color: var(--text-mid);
+            max-width: 460px; line-height: 1.75; margin-bottom: 52px;
+        }
+        .hero-cta {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-size: 12px; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.12em; color: var(--text);
+            border-bottom: 1px solid var(--text-dim); padding-bottom: 4px;
+            transition: border-color 0.25s; width: fit-content;
+        }
+        .hero-cta:hover { border-color: var(--text-mid); }
+
+        /* SECTION LABEL */
+        .section-label {
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--yellow);
+            margin-bottom: 48px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* WORK */
+        .work { padding: 120px 48px; border-top: 1px solid var(--border); }
+        .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+        .video-card { display: block; cursor: pointer; color: inherit; background: none; border: none; text-align: left; width: 100%; }
+        .video-card:hover .video-thumb { transform: scale(1.04); }
+        .video-card:hover .video-overlay { opacity: 1; }
+        .video-thumb-wrap {
+            position: relative; overflow: hidden;
+            background: var(--surface); aspect-ratio: 16/9;
+        }
+        .video-thumb {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+            background: var(--surface);
+        }
+        .video-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.45);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .play-btn {
+            width: 52px; height: 52px; border: 1px solid rgba(255,255,255,0.65);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .play-btn svg { width: 16px; height: 16px; fill: white; margin-left: 3px; }
+        .video-meta { padding: 14px 0 28px; }
+        .video-client {
+            font-size: 10px; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--text-mid); margin-bottom: 5px;
+        }
+        .video-title { font-size: 14px; font-weight: 400; color: var(--text); line-height: 1.45; }
+
+        /* LIGHTBOX */
+        .lightbox {
+            position: fixed; inset: 0; z-index: 1000;
+            background: rgba(0,0,0,0.92);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox.active {
+            opacity: 1; pointer-events: all;
+        }
+        .lightbox-inner {
+            position: relative;
+            width: 90vw;
+            max-width: 1100px;
+            aspect-ratio: 16/9;
+            background: #000;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.8);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .lightbox.active .lightbox-inner {
+            transform: scale(1);
+        }
+        .lightbox-inner iframe {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -44px; right: 0;
+            background: none; border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px; font-weight: 500;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            cursor: pointer; display: flex; align-items: center; gap: 8px;
+            font-family: 'Inter', sans-serif;
+            transition: color 0.2s;
+        }
+        .lightbox-close:hover { color: var(--yellow); }
+        .lightbox-close svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+
+        /* TESTIMONIALS */
+        .testimonials { padding: 120px 48px; border-top: 1px solid var(--border); }
+        .carousel-wrap { max-width: 740px; }
+        .carousel-slides { overflow: hidden; }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        .carousel-slide { flex: 0 0 100%; }
+        .quote-body {
+            font-size: clamp(19px, 2.4vw, 27px); font-weight: 200;
+            line-height: 1.65; letter-spacing: -0.015em;
+            color: var(--text); margin-bottom: 36px; font-style: italic;
+        }
+        .quote-author {
+            font-size: 12px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.14em; color: var(--text);
+        }
+        .quote-role { font-size: 12px; font-weight: 400; color: var(--text-mid); margin-top: 5px; }
+        .carousel-controls { display: flex; align-items: center; gap: 12px; margin-top: 52px; }
+        .carousel-btn {
+            width: 40px; height: 40px; border: 1px solid var(--border);
+            background: transparent; color: var(--text-mid); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .carousel-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+        .carousel-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+        .carousel-dots { display: flex; gap: 8px; margin-left: 4px; }
+        .dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--text-dim); cursor: pointer; transition: background 0.25s;
+        }
+        .dot.active { background: var(--yellow); }
+
+        /* CONTACT */
+        .contact { padding: 120px 48px; border-top: 1px solid var(--border); }
+        .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+        .contact-heading {
+            font-size: clamp(40px, 5.5vw, 72px); font-weight: 200;
+            letter-spacing: -0.03em; line-height: 1.05; color: var(--text);
+        }
+        .contact-heading em { font-style: italic; color: var(--text-mid); }
+        .contact-row { margin-bottom: 36px; }
+        .contact-row:last-child { margin-bottom: 0; }
+        .contact-lbl {
+            font-size: 11px; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--text-mid); margin-bottom: 7px;
+        }
+        .contact-val { font-size: 17px; font-weight: 300; color: var(--text); }
+        .contact-val a { transition: color 0.2s; }
+        .contact-val a:hover { color: var(--yellow); }
+
+        /* FOOTER */
+        footer {
+            padding: 28px 48px; border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .footer-copy { font-size: 12px; color: var(--text-dim); }
+        .footer-nav { display: flex; gap: 28px; }
+        .footer-nav a {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--yellow);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: opacity 0.2s;
+        }
+        .footer-nav a:hover { opacity: 0.7; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) {
+            nav { padding: 0 24px; }
+            .nav-links { gap: 24px; }
+            .hero { padding: 0 24px 64px; }
+            .work, .testimonials, .contact { padding: 80px 24px; }
+            footer { padding: 24px; flex-direction: column; gap: 16px; align-items: flex-start; }
+            .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+            .video-grid { grid-template-columns: 1fr; }
+            .lightbox-inner { width: 95vw; }
+        }
+        @media (max-width: 500px) {
+            .nav-links { display: none; }
+            .hero-name { font-size: 52px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="nav-logo">James Whittington</a>
+        <ul class="nav-links">
+            <li><a href="#work">Work</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <p class="hero-location">Seattle, WA &nbsp;—&nbsp; Available for Projects</p>
+        <h1 class="hero-name">James<br>Whittington</h1>
+        <p class="hero-desc">Freelance video editor with 20+ years crafting commercial, documentary, and branded content for agencies and brands worldwide.</p>
+        <a href="#work" class="hero-cta">View Work &nbsp;↓</a>
+    </section>
+
+    <section class="work" id="work">
+        <p class="section-label">Selected Work</p>
+        <div class="video-grid">
+
+            <button class="video-card" data-video-id="1171998200">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1171998200.jpg" alt="Seattle International Film Festival" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Seattle International Film Festival</p>
+                    <p class="video-title">2024 Trailer</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1171997790">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1171997790.jpg" alt="Amazon Blink" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Amazon Blink</p>
+                    <p class="video-title">Windswept</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1171997261">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1171997261.jpg" alt="Papa Murphy's" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Papa Murphy's</p>
+                    <p class="video-title">Murphy's Law of Chaos</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1171997286">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1171997286.jpg" alt="Amazon Blink" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Amazon Blink</p>
+                    <p class="video-title">Bird Raid</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1171998169">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1171998169.jpg" alt="National University" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">National University</p>
+                    <p class="video-title">Titles</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1173387686">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1173387686.jpg" alt="Les Schwab" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Les Schwab</p>
+                    <p class="video-title">Backseat Driver — Cheap Tire Stores</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1171998151">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1171998151.jpg" alt="Warner Bros Studio" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Warner Bros Studio</p>
+                    <p class="video-title">Made Here</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1171997212">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1171997212.jpg" alt="Alaska Airlines" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Alaska Airlines</p>
+                    <p class="video-title">Company Retreat With Russell Wilson</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1171997238">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1171997238.jpg" alt="Papa Murphy's" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Papa Murphy's</p>
+                    <p class="video-title">Murphy's Law of Art</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1173401919">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1173401919.jpg" alt="National University" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">National University</p>
+                    <p class="video-title">And</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1173394278">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1173394278.jpg" alt="Les Schwab" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Les Schwab</p>
+                    <p class="video-title">Backseat Driver — Warehouse</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1174895647">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1174895647.jpg" alt="International Day of the Girl" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">International Day of the Girl</p>
+                    <p class="video-title">Girls Will Be…</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1174918683">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1174918683.jpg" alt="Sound Credit Union" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Sound Credit Union</p>
+                    <p class="video-title">You're Going to Love it Here</p>
+                </div>
+            </button>
+
+            <button class="video-card" data-video-id="1174897974">
+                <div class="video-thumb-wrap">
+                    <img class="video-thumb" src="https://vumbnail.com/1174897974.jpg" alt="Phoenix Children's Hospital" onerror="this.style.background='#1a1a1a';this.removeAttribute('src')">
+                    <div class="video-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+                </div>
+                <div class="video-meta">
+                    <p class="video-client">Phoenix Children's Hospital</p>
+                    <p class="video-title">Adult vs Pediatric</p>
+                </div>
+            </button>
+
+        </div>
+    </section>
+
+    <!-- LIGHTBOX MODAL -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Video player">
+        <div class="lightbox-inner" id="lightboxInner">
+            <button class="lightbox-close" id="lightboxClose" aria-label="Close video">
+                <svg viewBox="0 0 24 24" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Close
+            </button>
+            <iframe id="lightboxFrame" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video player"></iframe>
+        </div>
+    </div>
+
+    <section class="testimonials" id="testimonials">
+        <p class="section-label">What People Say</p>
+        <div class="carousel-wrap">
+            <div class="carousel-slides">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="carousel-slide">
+                        <p class="quote-body">"James is one of the best editors I've ever worked with in my 40+ year career. What separates him is that he's an incredible collaborator. For years, James was our secret weapon in big-time pitches and on our largest accounts."</p>
+                        <p class="quote-author">Tracy Wong</p>
+                        <p class="quote-role">Executive Creative Director &amp; Chairman, Wongdoody</p>
+                    </div>
+                    <div class="carousel-slide">
+                        <p class="quote-body">"James is a creative thinker. What he does as an editor is truly amazing. You can hand him a sack of an undercooked script, vague notes, and random footage, and he can produce a thing of beauty."</p>
+                        <p class="quote-author">Mark Watson</p>
+                        <p class="quote-role">VP / Group Creative Director, Wongdoody</p>
+                    </div>
+                    <div class="carousel-slide">
+                        <p class="quote-body">"James is one of those rare editors who elevates everything he touches. He turns ambiguity into sharp, emotionally resonant storytelling. Once you've worked with him, you won't want to make the next thing without him."</p>
+                        <p class="quote-author">Stacy McCann</p>
+                        <p class="quote-role">VP of Production, Wongdoody</p>
+                    </div>
+                    <div class="carousel-slide">
+                        <p class="quote-body">"James is a fantastic editor. He's one of if not the most creative editors I've ever worked with. He's very clever, resourceful and able to make something great out of virtually nothing. He's technically very proficient and creatively gifted."</p>
+                        <p class="quote-author">Austin Anderson</p>
+                        <p class="quote-role">Creative Director, Wongdoody</p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-controls">
+                <button class="carousel-btn" id="prevBtn" aria-label="Previous">
+                    <svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button class="carousel-btn" id="nextBtn" aria-label="Next">
+                    <svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="9 6 15 12 9 18"/></svg>
+                </button>
+                <div class="carousel-dots" id="carouselDots">
+                    <span class="dot active" data-index="0"></span>
+                    <span class="dot" data-index="1"></span>
+                    <span class="dot" data-index="2"></span>
+                    <span class="dot" data-index="3"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <p class="section-label">Get in Touch</p>
+        <div class="contact-layout">
+            <div>
+                <h2 class="contact-heading">Let's work<br><em>together.</em></h2>
+            </div>
+            <div>
+                <div class="contact-row">
+                    <p class="contact-lbl">Email</p>
+                    <p class="contact-val"><a href="mailto:jwhittington78@gmail.com">jwhittington78@gmail.com</a></p>
+                </div>
+                <div class="contact-row">
+                    <p class="contact-lbl">Phone</p>
+                    <p class="contact-val"><a href="tel:+15039306465">503-930-6465</a></p>
+                </div>
+                <div class="contact-row">
+                    <p class="contact-lbl">Location</p>
+                    <p class="contact-val">Seattle, WA</p>
+                </div>
+                <div class="contact-row">
+                    <p class="contact-lbl">Availability</p>
+                    <p class="contact-val">Open to freelance &amp; contract work</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p class="footer-copy">&copy; 2025 James Whittington. All rights reserved.</p>
+        <nav class="footer-nav">
+            <a href="about.html">About</a>
+            <a href="https://vimeo.com/jameswhittington" target="_blank" rel="noopener">Vimeo</a>
+            <a href="https://www.linkedin.com/in/james-whittington-8903481/" target="_blank" rel="noopener">LinkedIn</a>
+        </nav>
+    </footer>
+
+    <script>
+        /* ── LIGHTBOX ── */
+        const lightbox      = document.getElementById('lightbox');
+        const lightboxFrame = document.getElementById('lightboxFrame');
+        const lightboxClose = document.getElementById('lightboxClose');
+        const lightboxInner = document.getElementById('lightboxInner');
+
+        function openLightbox(videoId) {
+            lightboxFrame.src = `https://player.vimeo.com/video/${videoId}?autoplay=1&color=FFE500&title=0&byline=0&portrait=0`;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            lightboxFrame.src = '';
+            document.body.style.overflow = '';
+        }
+
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('click', () => openLightbox(card.dataset.videoId));
+        });
+
+        lightboxClose.addEventListener('click', closeLightbox);
+
+        // Click backdrop to close
+        lightbox.addEventListener('click', e => {
+            if (!lightboxInner.contains(e.target)) closeLightbox();
+        });
+
+        // ESC key to close
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        /* ── CAROUSEL ── */
+        const track = document.getElementById('carouselTrack');
+        const dots  = document.querySelectorAll('.dot');
+        let current = 0;
+        const total = dots.length;
+        let autoTimer;
+
+        function goTo(i) {
+            current = (i + total) % total;
+            track.style.transform = `translateX(-${current * 100}%)`;
+            dots.forEach((d, j) => d.classList.toggle('active', j === current));
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => { goTo(current - 1); reset(); });
+        document.getElementById('nextBtn').addEventListener('click', () => { goTo(current + 1); reset(); });
+        dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.index); reset(); }));
+
+        function reset() { clearInterval(autoTimer); autoTimer = setInterval(() => goTo(current + 1), 6000); }
+        autoTimer = setInterval(() => goTo(current + 1), 6000);
+    </script>
+
+</body>
+</html>
