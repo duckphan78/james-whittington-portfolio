@@ -66,15 +66,34 @@
             display: flex; flex-direction: column; justify-content: flex-end;
             padding: 0 48px 88px;
             position: relative;
-            background:
-                linear-gradient(
-                    to bottom,
-                    rgba(10,10,10,0.15) 0%,
-                    rgba(10,10,10,0.35) 40%,
-                    rgba(10,10,10,0.80) 72%,
-                    rgba(10,10,10,1.00) 100%
-                ),
-                url('james-hero.png') center / cover no-repeat;
+            overflow: hidden;
+            background: none;
+        }
+        /* Image layer — moves on scroll */
+        .hero-bg {
+            position: absolute;
+            inset: -18% 0;
+            background: url('james-hero.png') center / cover no-repeat;
+            will-change: transform;
+            z-index: 0;
+        }
+        /* Gradient overlay — stays fixed over the image */
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(10,10,10,0.15) 0%,
+                rgba(10,10,10,0.35) 40%,
+                rgba(10,10,10,0.80) 72%,
+                rgba(10,10,10,1.00) 100%
+            );
+            z-index: 1;
+            pointer-events: none;
+        }
+        /* Text content stays above both layers */
+        .hero-location, .hero-name, .hero-desc, .hero-cta {
+            position: relative; z-index: 2;
         }
         .hero-location {
             font-size: 11px; font-weight: 500; text-transform: uppercase;
@@ -184,6 +203,32 @@
         .lightbox-close:hover { color: var(--yellow); }
         .lightbox-close svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
 
+        /* HOW I WORK */
+        .process {
+            padding: 120px 48px; border-top: 1px solid var(--border);
+        }
+        .process-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 2px; margin-top: 64px;
+        }
+        .process-step {
+            background: var(--surface); padding: 48px 36px 52px;
+            position: relative;
+        }
+        .process-num {
+            font-size: 72px; font-weight: 200; letter-spacing: -0.04em;
+            color: var(--yellow); line-height: 1; margin-bottom: 32px;
+            opacity: 0.9;
+        }
+        .process-title {
+            font-size: 18px; font-weight: 300; letter-spacing: -0.01em;
+            color: var(--text); line-height: 1.3; margin-bottom: 16px;
+        }
+        .process-desc {
+            font-size: 14px; font-weight: 300; color: var(--text-mid);
+            line-height: 1.8;
+        }
+
         /* TESTIMONIALS */
         .testimonials { padding: 120px 48px; border-top: 1px solid var(--border); }
         .carousel-wrap { max-width: 740px; }
@@ -217,6 +262,21 @@
             background: var(--text-dim); cursor: pointer; transition: background 0.25s;
         }
         .dot.active { background: var(--yellow); }
+        .carousel-progress {
+            height: 2px; background: var(--border);
+            margin-top: 32px; overflow: hidden;
+        }
+        .carousel-progress-bar {
+            height: 100%; width: 0%; background: var(--yellow);
+            transform-origin: left;
+        }
+        .carousel-progress-bar.running {
+            animation: progress-fill 8s linear forwards;
+        }
+        @keyframes progress-fill {
+            from { width: 0%; }
+            to   { width: 100%; }
+        }
 
         /* CONTACT */
         .contact { padding: 120px 48px; border-top: 1px solid var(--border); }
@@ -236,6 +296,39 @@
         .contact-val a { transition: color 0.2s; }
         .contact-val a:hover { color: var(--yellow); }
 
+        /* CONTACT FORM */
+        .contact-form { display: flex; flex-direction: column; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-label {
+            font-size: 11px; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--text-mid);
+        }
+        .form-input, .form-textarea {
+            background: #252525; border: 1px solid #383838;
+            color: var(--text); font-family: 'Inter', sans-serif;
+            font-size: 15px; font-weight: 300; padding: 14px 16px;
+            outline: none; transition: border-color 0.2s; width: 100%;
+            -webkit-appearance: none; border-radius: 0;
+        }
+        .form-input::placeholder, .form-textarea::placeholder { color: var(--text-dim); }
+        .form-input:focus, .form-textarea:focus { border-color: var(--yellow); }
+        .form-textarea { resize: vertical; min-height: 140px; line-height: 1.7; }
+        .form-submit {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--yellow); color: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.14em; padding: 16px 32px; border: none;
+            cursor: pointer; transition: opacity 0.2s; align-self: flex-start;
+            margin-top: 4px;
+        }
+        .form-submit:hover { opacity: 0.85; }
+        .form-success {
+            display: none; padding: 16px; border: 1px solid var(--yellow);
+            color: var(--yellow); font-size: 13px; font-weight: 400;
+            letter-spacing: 0.04em; line-height: 1.6;
+        }
+
         /* FOOTER */
         footer {
             padding: 28px 48px; border-top: 1px solid var(--border);
@@ -253,17 +346,30 @@
         }
         .footer-nav a:hover { opacity: 0.7; }
 
+        /* SCROLL ANIMATIONS */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: none;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 1100px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 960px) { .process-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
             nav { padding: 0 24px; }
             .nav-links { gap: 24px; }
             .hero { padding: 0 24px 64px; }
-            .work, .testimonials, .contact { padding: 80px 24px; }
+            .work, .process, .testimonials, .contact { padding: 80px 24px; }
             footer { padding: 24px; flex-direction: column; gap: 16px; align-items: flex-start; }
             .contact-layout { grid-template-columns: 1fr; gap: 48px; }
             .video-grid { grid-template-columns: 1fr; }
             .lightbox-inner { width: 95vw; }
+            .process-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 500px) {
             .nav-links { display: none; }
@@ -283,6 +389,7 @@
     </nav>
 
     <section class="hero">
+        <div class="hero-bg" aria-hidden="true"></div>
         <p class="hero-location">Seattle, WA &nbsp;—&nbsp; Available for Projects</p>
         <h1 class="hero-name">James<br>Whittington</h1>
         <p class="hero-desc">Freelance video editor with 20+ years crafting commercial, documentary, and branded content for agencies and brands worldwide.</p>
@@ -450,6 +557,38 @@
         </div>
     </section>
 
+    <!-- HOW I WORK -->
+    <section class="process" id="process">
+        <p class="section-label">How I Work</p>
+        <div class="process-grid">
+
+            <div class="process-step">
+                <p class="process-num">01</p>
+                <h3 class="process-title">Discovery</h3>
+                <p class="process-desc">We connect by email or referral. You tell me about the project, the timeline, and what you're going for. No lengthy intake — just a real conversation about what you need.</p>
+            </div>
+
+            <div class="process-step">
+                <p class="process-num">02</p>
+                <h3 class="process-title">Edit</h3>
+                <p class="process-desc">I get to work. Expect a polished first cut in 2–3 days, sometimes faster depending on the project. Remote, on-site, or a mix — I adapt to however your team works best.</p>
+            </div>
+
+            <div class="process-step">
+                <p class="process-num">03</p>
+                <h3 class="process-title">Refine</h3>
+                <p class="process-desc">Revisions are fluid and collaborative. We go back and forth until it's right. No rigid round limits — just a shared commitment to getting it exactly where it needs to be.</p>
+            </div>
+
+            <div class="process-step">
+                <p class="process-num">04</p>
+                <h3 class="process-title">Deliver</h3>
+                <p class="process-desc">Final files in whatever format you need — broadcast, web, social, or all three. Clean handoff, no hassle. Ready to go the moment you need it.</p>
+            </div>
+
+        </div>
+    </section>
+
     <!-- LIGHTBOX MODAL -->
     <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Video player">
         <div class="lightbox-inner" id="lightboxInner">
@@ -467,22 +606,22 @@
             <div class="carousel-slides">
                 <div class="carousel-track" id="carouselTrack">
                     <div class="carousel-slide">
-                        <p class="quote-body">"James is one of the best editors I've ever worked with in my 40+ year career. What separates him is that he's an incredible collaborator. For years, James was our secret weapon in big-time pitches and on our largest accounts."</p>
+                        <p class="quote-body">James is one of the best editors I've ever worked with in my 40+ year career. What separates him is that he's an incredible collaborator. For years, James was our secret weapon in big-time pitches and on our largest accounts.</p>
                         <p class="quote-author">Tracy Wong</p>
                         <p class="quote-role">Executive Creative Director &amp; Chairman, Wongdoody</p>
                     </div>
                     <div class="carousel-slide">
-                        <p class="quote-body">"James is a creative thinker. What he does as an editor is truly amazing. You can hand him a sack of an undercooked script, vague notes, and random footage, and he can produce a thing of beauty."</p>
+                        <p class="quote-body">James is a creative thinker. What he does as an editor is truly amazing. You can hand him a sack of an undercooked script, vague notes, and random footage, and he can produce a thing of beauty.</p>
                         <p class="quote-author">Mark Watson</p>
                         <p class="quote-role">VP / Group Creative Director, Wongdoody</p>
                     </div>
                     <div class="carousel-slide">
-                        <p class="quote-body">"James is one of those rare editors who elevates everything he touches. He turns ambiguity into sharp, emotionally resonant storytelling. Once you've worked with him, you won't want to make the next thing without him."</p>
+                        <p class="quote-body">James is one of those rare editors who elevates everything he touches. He turns ambiguity into sharp, emotionally resonant storytelling. Once you've worked with him, you won't want to make the next thing without him.</p>
                         <p class="quote-author">Stacy McCann</p>
                         <p class="quote-role">VP of Production, Wongdoody</p>
                     </div>
                     <div class="carousel-slide">
-                        <p class="quote-body">"James is a fantastic editor. He's one of if not the most creative editors I've ever worked with. He's very clever, resourceful and able to make something great out of virtually nothing. He's technically very proficient and creatively gifted."</p>
+                        <p class="quote-body">James is a fantastic editor. He's one of if not the most creative editors I've ever worked with. He's very clever, resourceful and able to make something great out of virtually nothing. He's technically very proficient and creatively gifted.</p>
                         <p class="quote-author">Austin Anderson</p>
                         <p class="quote-role">Creative Director, Wongdoody</p>
                     </div>
@@ -502,6 +641,9 @@
                     <span class="dot" data-index="3"></span>
                 </div>
             </div>
+            <div class="carousel-progress">
+                <div class="carousel-progress-bar" id="carouselProgressBar"></div>
+            </div>
         </div>
     </section>
 
@@ -510,24 +652,44 @@
         <div class="contact-layout">
             <div>
                 <h2 class="contact-heading">Let's work<br><em>together.</em></h2>
+                <div style="margin-top: 52px;">
+                    <div class="contact-row">
+                        <p class="contact-lbl">Email</p>
+                        <p class="contact-val"><a href="mailto:jwhittington78@gmail.com">jwhittington78@gmail.com</a></p>
+                    </div>
+                    <div class="contact-row">
+                        <p class="contact-lbl">Phone</p>
+                        <p class="contact-val"><a href="tel:+15039306465">503-930-6465</a></p>
+                    </div>
+                    <div class="contact-row">
+                        <p class="contact-lbl">Location</p>
+                        <p class="contact-val">Seattle, WA</p>
+                    </div>
+                    <div class="contact-row">
+                        <p class="contact-lbl">Availability</p>
+                        <p class="contact-val">Open to freelance &amp; contract work</p>
+                    </div>
+                </div>
             </div>
             <div>
-                <div class="contact-row">
-                    <p class="contact-lbl">Email</p>
-                    <p class="contact-val"><a href="mailto:jwhittington78@gmail.com">jwhittington78@gmail.com</a></p>
-                </div>
-                <div class="contact-row">
-                    <p class="contact-lbl">Phone</p>
-                    <p class="contact-val"><a href="tel:+15039306465">503-930-6465</a></p>
-                </div>
-                <div class="contact-row">
-                    <p class="contact-lbl">Location</p>
-                    <p class="contact-val">Seattle, WA</p>
-                </div>
-                <div class="contact-row">
-                    <p class="contact-lbl">Availability</p>
-                    <p class="contact-val">Open to freelance &amp; contract work</p>
-                </div>
+                <form class="contact-form" id="contactForm" action="https://formspree.io/f/mreowzrl" method="POST">
+                    <div class="form-group">
+                        <label class="form-label" for="contact-name">Name</label>
+                        <input class="form-input" type="text" id="contact-name" name="name" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="contact-email">Email</label>
+                        <input class="form-input" type="email" id="contact-email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="contact-message">Message</label>
+                        <textarea class="form-textarea" id="contact-message" name="message" placeholder="Tell me about your project…" required></textarea>
+                    </div>
+                    <button class="form-submit" type="submit">Send Message &nbsp;→</button>
+                    <div class="form-success" id="formSuccess">
+                        Message sent — I'll be in touch soon.
+                    </div>
+                </form>
             </div>
         </div>
     </section>
@@ -576,25 +738,123 @@
             if (e.key === 'Escape') closeLightbox();
         });
 
+        /* ── CONTACT FORM ── */
+        const contactForm = document.getElementById('contactForm');
+        const formSuccess = document.getElementById('formSuccess');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const btn = contactForm.querySelector('.form-submit');
+                btn.textContent = 'Sending…';
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch(contactForm.action, {
+                        method: 'POST',
+                        body: new FormData(contactForm),
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (res.ok) {
+                        contactForm.reset();
+                        btn.style.display = 'none';
+                        formSuccess.style.display = 'block';
+                    } else {
+                        btn.textContent = 'Send Message →';
+                        btn.disabled = false;
+                        alert('Something went wrong. Please email me directly at jwhittington78@gmail.com');
+                    }
+                } catch {
+                    btn.textContent = 'Send Message →';
+                    btn.disabled = false;
+                    alert('Something went wrong. Please email me directly at jwhittington78@gmail.com');
+                }
+            });
+        }
+
         /* ── CAROUSEL ── */
-        const track = document.getElementById('carouselTrack');
-        const dots  = document.querySelectorAll('.dot');
+        const track       = document.getElementById('carouselTrack');
+        const dots        = document.querySelectorAll('.dot');
+        const progressBar = document.getElementById('carouselProgressBar');
         let current = 0;
         const total = dots.length;
         let autoTimer;
+
+        function restartProgress() {
+            progressBar.classList.remove('running');
+            void progressBar.offsetWidth; // force reflow so animation restarts
+            progressBar.classList.add('running');
+        }
 
         function goTo(i) {
             current = (i + total) % total;
             track.style.transform = `translateX(-${current * 100}%)`;
             dots.forEach((d, j) => d.classList.toggle('active', j === current));
+            restartProgress();
         }
 
         document.getElementById('prevBtn').addEventListener('click', () => { goTo(current - 1); reset(); });
         document.getElementById('nextBtn').addEventListener('click', () => { goTo(current + 1); reset(); });
         dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.index); reset(); }));
 
-        function reset() { clearInterval(autoTimer); autoTimer = setInterval(() => goTo(current + 1), 6000); }
-        autoTimer = setInterval(() => goTo(current + 1), 6000);
+        function reset() { clearInterval(autoTimer); autoTimer = setInterval(() => goTo(current + 1), 8000); }
+        autoTimer = setInterval(() => goTo(current + 1), 8000);
+        restartProgress(); // kick off on load
+        /* ── HERO PARALLAX ── */
+        (function() {
+            const heroBg = document.querySelector('.hero-bg');
+            if (!heroBg) return;
+            const heroHeight = window.innerHeight;
+            function onScroll() {
+                if (window.scrollY <= heroHeight * 1.5) {
+                    heroBg.style.transform = `translateY(${window.scrollY * 0.35}px)`;
+                }
+            }
+            window.addEventListener('scroll', onScroll, { passive: true });
+        })();
+
+        /* ── SCROLL ANIMATIONS ── */
+        (function() {
+            // Elements that fade in one at a time
+            const singles = [
+                ...document.querySelectorAll('.section-label'),
+                ...document.querySelectorAll('.contact-heading'),
+                ...document.querySelectorAll('.carousel-wrap'),
+                ...document.querySelectorAll('.contact-form'),
+                document.querySelector('.hero-cta'),
+            ].filter(Boolean);
+
+            singles.forEach(el => el.classList.add('fade-in'));
+
+            // Video cards — staggered by column position
+            document.querySelectorAll('.video-card').forEach((card, i) => {
+                card.classList.add('fade-in');
+                card.style.transitionDelay = `${(i % 3) * 80}ms`;
+            });
+
+            // Process steps — staggered left to right
+            document.querySelectorAll('.process-step').forEach((step, i) => {
+                step.classList.add('fade-in');
+                step.style.transitionDelay = `${i * 90}ms`;
+            });
+
+            // Contact rows
+            document.querySelectorAll('.contact-row').forEach((row, i) => {
+                row.classList.add('fade-in');
+                row.style.transitionDelay = `${i * 60}ms`;
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        })();
     </script>
 
 </body>
